@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tasolog - Modern Psikoloji & Mindfulness</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="AI destekli modern psikoloji ve mindfulness uygulaması">
+    <meta name="keywords" content="psikoloji, mindfulness, meditasyon, duygu analizi, AI">
+    <meta name="author" content="Tasolog">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tasolog">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Tasolog">
+    
+    <!-- iPhone Specific Meta Tags -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-touch-fullscreen" content="yes">
+    <meta name="apple-mobile-web-app-orientations" content="portrait">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tasolog">
+    <meta name="msapplication-TileColor" content="#6366f1">
+    <meta name="msapplication-TileImage" content="{{ url_for('static', filename='images/icon-144x144.png') }}">
+    <meta name="msapplication-config" content="none">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='images/icon-192.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ url_for('static', filename='images/icon-152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/icon-180.png') }}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{{ url_for('static', filename='images/icon-167.png') }}">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- iOS Splash Screens -->
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/splash-2048x2732.png') }}" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/splash-1668x2388.png') }}" media="(device-width: 834px) and (device-height: 1194px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/splash-1536x2048.png') }}" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/splash-1125x2436.png') }}" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/splash-1242x2688.png') }}" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/splash-828x1792.png') }}" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/splash-750x1334.png') }}" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="{{ url_for('static', filename='images/splash-640x1136.png') }}" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <i class="fas fa-brain"></i>
+                <span>Tasolog</span>
+            </div>
+            <div class="loading-spinner"></div>
+            <p>AI modelleri yükleniyor...</p>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <span id="loading-text">Duygu analizi modelleri hazırlanıyor...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div id="pwa-install-prompt" class="pwa-install-prompt">
+        <div class="pwa-install-content">
+            <div class="pwa-install-header">
+                <div class="pwa-install-icon">
+                    <i class="fas fa-download"></i>
+                </div>
+                <div class="pwa-install-title">
+                    <h3>Ana Ekrana Ekle</h3>
+                    <p>Tasolog'u ana ekranınıza ekleyin ve daha hızlı erişim sağlayın</p>
+                </div>
+                <button class="pwa-close-btn" id="pwa-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="pwa-install-features">
+                <div class="pwa-feature">
+                    <i class="fas fa-rocket"></i>
+                    <span>Hızlı erişim</span>
+                </div>
+                <div class="pwa-feature">
+                    <i class="fas fa-wifi-slash"></i>
+                    <span>Offline çalışma</span>
+                </div>
+                <div class="pwa-feature">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>Native deneyim</span>
+                </div>
+            </div>
+            
+            <div class="pwa-install-actions">
+                <button class="pwa-install-btn primary" id="pwa-install-btn">
+                    <i class="fas fa-plus"></i>
+                    <span>Ana Ekrana Ekle</span>
+                </button>
+                <button class="pwa-install-btn secondary" id="pwa-later-btn">
+                    <span>Daha Sonra</span>
+                </button>
+            </div>
+            
+            <div class="pwa-install-tutorial">
+                <div class="tutorial-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Safari'de Paylaş butonuna basın</h4>
+                        <p>Alt menüdeki paylaş ikonuna dokunun</p>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>"Ana Ekrana Ekle" seçin</h4>
+                        <p>Menüden "Ana Ekrana Ekle" seçeneğini bulun</p>
+                    </div>
+                </div>
+                <div class="tutorial-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>"Ekle" butonuna basın</h4>
+                        <p>İsimi onaylayın ve "Ekle" butonuna dokunun</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="app-container" id="app-container">
+        <!-- Home Section -->
+        <section class="home-section" id="home-section">
+            <!-- Header Section -->
+            <header class="app-header">
+                <div class="header-content">
+                    <div class="user-greeting">
+                        <h1 id="greeting-text">Merhaba! Nasıl hissediyorsun?</h1>
+                        <p class="greeting-subtitle">Bugün kendini nasıl hissediyorsun? Duygularını paylaş, sana özel tavsiyeler al.</p>
+                    </div>
+                    
+                    <!-- Mood Tracker -->
+                    <div class="mood-tracker">
+                        <div class="mood-emoji" id="current-mood">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <div class="mood-label" id="mood-label">Neutral</div>
+                    </div>
+                </div>
+                
+                <!-- Notification Bell -->
+                <div class="notification-bell" id="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notification-badge">3</span>
+                </div>
+            </header>
+
+            <!-- Quick Actions -->
+            <section class="quick-actions">
+                <div class="action-card primary-action" id="daily-reflection-btn">
+                    <div class="action-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <div class="action-content">
+                        <h3>Günlük Yansıma</h3>
+                        <p>AI destekli duygu analizi ile kendini keşfet</p>
+                    </div>
+                    <div class="action-arrow">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Feature Grid -->
+            <section class="feature-grid">
+                <div class="feature-card" id="meditation-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h4>Meditasyon</h4>
+                    <p>Mindfulness seansları</p>
+                </div>
+                
+                <div class="feature-card" id="journal-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h4>Günlük</h4>
+                    <p>Duygu takibi</p>
+                </div>
+                
+                <div class="feature-card" id="progress-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>İlerleme</h4>
+                    <p>Kişisel gelişim</p>
+                </div>
+                
+                <div class="feature-card" id="support-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h4>Destek</h4>
+                    <p>AI danışman</p>
+                </div>
+            </section>
+
+            <!-- Progress Widget -->
+            <section class="progress-widget">
+                <div class="progress-content">
+                    <div class="progress-info">
+                        <h3>Mindfulness Serisi</h3>
+                        <p>5 gün tamamladın! Devam et!</p>
+                    </div>
+                    <div class="progress-circle">
+                        <div class="progress-ring">
+                            <svg width="60" height="60">
+                                <circle cx="30" cy="30" r="25" stroke="#e0e7ff" stroke-width="4" fill="none"/>
+                                <circle cx="30" cy="30" r="25" stroke="#6366f1" stroke-width="4" fill="none" 
+                                        stroke-dasharray="157" stroke-dashoffset="47" class="progress-circle-fill"/>
+                            </svg>
+                            <span class="progress-text">70%</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Daily Streak -->
+            <section class="streak-widget">
+                <div class="streak-content">
+                    <div class="streak-info">
+                        <h3>🔥 Günlük Seri</h3>
+                        <p>7 gün üst üste!</p>
+                    </div>
+                    <div class="streak-days">
+                        <div class="streak-day active">1</div>
+                        <div class="streak-day active">2</div>
+                        <div class="streak-day active">3</div>
+                        <div class="streak-day active">4</div>
+                        <div class="streak-day active">5</div>
+                        <div class="streak-day active">6</div>
+                        <div class="streak-day active">7</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Stats -->
+            <section class="quick-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Mood Skoru</h4>
+                        <p>8.5/10</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Meditasyon</h4>
+                        <p>45 dk</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Günlük</h4>
+                        <p>12 gün</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- AI Analysis Section (Hidden by default) -->
+        <section class="analysis-section" id="analysis-section" style="display: none;">
+            <div class="section-header">
+                <h3>AI Duygu Analizi</h3>
+                <div class="ai-badge">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Destekli</span>
+                </div>
+            </div>
+
+            <!-- Input Container -->
+            <div class="input-container">
+                <div class="input-header">
+                    <h4>Duygularını Paylaş</h4>
+                    <p>Bugün nasıl hissediyorsun? Duygularını, düşüncelerini veya yaşadığın durumu detaylı bir şekilde anlat...</p>
+                </div>
+                
+                <div class="ai-features">
+                    <div class="feature-item">
+                        <i class="fas fa-robot"></i>
+                        <span>Çoklu AI Model</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-brain"></i>
+                        <span>Derin Analiz</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Tamamen Offline</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Gelişmiş İçgörüler</span>
+                    </div>
+                </div>
+
+                <div class="textarea-container">
+                    <textarea 
+                        id="emotion-text" 
+                        placeholder="Bugün nasıl hissediyorsun? Duygularını, düşüncelerini veya yaşadığın durumu detaylı bir şekilde anlat..."
+                        maxlength="2000"
+                    ></textarea>
+                    <div class="char-counter">
+                        <span id="char-count">0</span>/2000
+                    </div>
+                </div>
+
+                <button id="analyze-btn" class="analyze-btn">
+                    <i class="fas fa-magic"></i>
+                    <span>AI Analiz Et</span>
+                </button>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section" id="results-section" style="display: none;">
+                <div class="results-header">
+                    <h3>AI Analiz Sonuçları</h3>
+                    <div class="ai-badge">
+                        <i class="fas fa-robot"></i>
+                        <span>AI Destekli</span>
+                    </div>
+                </div>
+
+                <!-- AI Status Card -->
+                <div class="ai-status-card" id="ai-status-card">
+                    <div class="status-content">
+                        <i class="fas fa-robot"></i>
+                        <div class="status-info">
+                            <h4>AI Model Durumu</h4>
+                            <p id="ai-status-text">AI modelleri yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sentiment Summary -->
+                <div class="sentiment-summary" id="sentiment-summary">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h4>Genel Duygu Durumu</h4>
+                            <p id="overall-sentiment">Analiz ediliyor...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insights Section -->
+                <div class="insights-section" id="insights-section">
+                    <div class="insights-header">
+                        <i class="fas fa-lightbulb"></i>
+                        <h4>AI İçgörüleri</h4>
+                    </div>
+                    <div class="insights-content" id="insights-content">
+                        <!-- Insights will be inserted here -->
+                    </div>
+                </div>
+
+                <!-- Text Analysis -->
+                <div class="analysis-card">
+                    <div class="card-header">
+                        <i class="fas fa-file-alt"></i>
+                        <h4>Metin Analizi</h4>
+                    </div>
+                    <div class="card-content">
+                        <div class="text-metrics">
+                            <div class="metric-item">
+                                <span>Cümle Sayısı</span>
+                                <strong id="sentence-count">0</strong>
+                            </div>
+                            <div class="metric-item">
+                                <span>Kelime Sayısı</span>
+                                <strong id="word-count">0</strong>
+                            </div>
+                            <div class="metric-item">
+                                <span>Özgün Kelimeler</span>
+                                <strong id="unique-words">0</strong>
+                            </div>
+                            <div class="metric-item">
+                                <span>Kelime Çeşitliliği</span>
+                                <strong id="lexical-diversity">0%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Models Status -->
+                <div class="analysis-card">
+                    <div class="card-header">
+                        <i class="fas fa-cogs"></i>
+                        <h4>AI Modelleri</h4>
+                    </div>
+                    <div class="card-content">
+                        <div class="model-status">
+                            <div class="model-item">
+                                <i class="fas fa-check-circle" id="sentiment-model-icon"></i>
+                                <span>Sentiment Model</span>
+                            </div>
+                            <div class="model-item">
+                                <i class="fas fa-check-circle" id="emotion-model-icon"></i>
+                                <span>Emotion Model</span>
+                            </div>
+                            <div class="model-item">
+                                <i class="fas fa-check-circle" id="turkish-model-icon"></i>
+                                <span>Türkçe Model</span>
+                            </div>
+                            <div class="model-item">
+                                <i class="fas fa-check-circle" id="embedding-model-icon"></i>
+                                <span>Embedding Model</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Psychological Advice -->
+                <div class="advice-section" id="advice-section">
+                    <h4>AI Psikolojik Tavsiyeler</h4>
+                    <div class="advice-list" id="advice-list">
+                        <!-- Advice will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Meditation Section (Hidden by default) -->
+        <section class="meditation-section" id="meditation-section" style="display: none;">
+            <div class="section-header">
+                <h3>🧘‍♀️ Meditasyon</h3>
+                <p>Mindfulness seansları ile iç huzurunu bul</p>
+            </div>
+            
+            <div class="meditation-categories">
+                <div class="category-card active" data-category="beginner">
+                    <i class="fas fa-seedling"></i>
+                    <span>Başlangıç</span>
+                </div>
+                <div class="category-card" data-category="intermediate">
+                    <i class="fas fa-leaf"></i>
+                    <span>Orta</span>
+                </div>
+                <div class="category-card" data-category="advanced">
+                    <i class="fas fa-tree"></i>
+                    <span>İleri</span>
+                </div>
+            </div>
+            
+            <div class="meditation-sessions">
+                <div class="session-card">
+                    <div class="session-info">
+                        <h4>Nefes Farkındalığı</h4>
+                        <p>5 dakika • Başlangıç</p>
+                    </div>
+                    <div class="session-play">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                
+                <div class="session-card">
+                    <div class="session-info">
+                        <h4>Vücut Taraması</h4>
+                        <p>10 dakika • Orta</p>
+                    </div>
+                    <div class="session-play">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+                
+                <div class="session-card">
+                    <div class="session-info">
+                        <h4>Sevgi Meditasyonu</h4>
+                        <p>15 dakika • İleri</p>
+                    </div>
+                    <div class="session-play">
+                        <i class="fas fa-play"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Journal Section (Hidden by default) -->
+        <section class="journal-section" id="journal-section" style="display: none;">
+            <div class="section-header">
+                <h3>📖 Günlük</h3>
+                <p>Duygularını ve düşüncelerini kaydet</p>
+            </div>
+            
+            <div class="journal-actions">
+                <button class="journal-btn primary">
+                    <i class="fas fa-plus"></i>
+                    <span>Yeni Günlük</span>
+                </button>
+                <button class="journal-btn secondary">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>İstatistikler</span>
+                </button>
+            </div>
+            
+            <div class="journal-entries">
+                <div class="entry-card">
+                    <div class="entry-date">
+                        <span class="day">13</span>
+                        <span class="month">Ağu</span>
+                    </div>
+                    <div class="entry-content">
+                        <h4>Bugün çok güzel bir gündü</h4>
+                        <p>Projemi tamamladım ve çok mutluyum...</p>
+                        <div class="entry-mood">
+                            <i class="fas fa-smile"></i>
+                            <span>Mutlu</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="entry-card">
+                    <div class="entry-date">
+                        <span class="day">12</span>
+                        <span class="month">Ağu</span>
+                    </div>
+                    <div class="entry-content">
+                        <h4>Biraz stresli bir gün</h4>
+                        <p>İş yerinde yoğunluk vardı ama...</p>
+                        <div class="entry-mood">
+                            <i class="fas fa-meh"></i>
+                            <span>Nötr</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat Section (Hidden by default) -->
+        <section class="chat-section" id="chat-section" style="display: none;">
+            <div class="section-header">
+                <h3>💬 AI Sohbet</h3>
+                <p>AI danışmanla konuş, destek al</p>
+            </div>
+            
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message ai-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>Merhaba! Ben senin AI danışmanın. Nasıl yardımcı olabilirim?</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <input type="text" id="chat-input-field" placeholder="Mesajını yaz...">
+                    <button id="send-message-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Profile Section (Hidden by default) -->
+        <section class="profile-section" id="profile-section" style="display: none;">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <h3>Kullanıcı</h3>
+                    <p>Mindfulness yolculuğunda 30 gün</p>
+                </div>
+            </div>
+            
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span class="stat-number">30</span>
+                    <span class="stat-label">Gün</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">45</span>
+                    <span class="stat-label">Saat</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">8.5</span>
+                    <span class="stat-label">Ortalama</span>
+                </div>
+            </div>
+            
+            <div class="profile-menu">
+                <div class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Ayarlar</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-bell"></i>
+                    <span>Bildirimler</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Gizlilik</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Yardım</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Hakkında</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" data-section="home">
+                <i class="fas fa-home"></i>
+                <span>Ana Sayfa</span>
+            </div>
+            <div class="nav-item" data-section="journal">
+                <i class="fas fa-book-open"></i>
+                <span>Günlük</span>
+            </div>
+            <div class="nav-item" data-section="meditation">
+                <i class="fas fa-spa"></i>
+                <span>Meditasyon</span>
+            </div>
+            <div class="nav-item" data-section="chat">
+                <i class="fas fa-comments"></i>
+                <span>Sohbet</span>
+            </div>
+            <div class="nav-item" data-section="profile">
+                <i class="fas fa-user"></i>
+                <span>Profil</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Notification Panel (Hidden by default) -->
+    <div class="notification-panel" id="notification-panel">
+        <div class="notification-header">
+            <h3>Bildirimler</h3>
+            <button class="close-notifications" id="close-notifications">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-list">
+            <div class="notification-item">
+                <div class="notification-icon">
+                    <i class="fas fa-spa"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Meditasyon Zamanı</h4>
+                    <p>Günlük mindfulness seansını kaçırma!</p>
+                    <span class="notification-time">2 saat önce</span>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Mood Takibi</h4>
+                    <p>Bugün nasıl hissediyorsun? Duygularını paylaş.</p>
+                    <span class="notification-time">5 saat önce</span>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <div class="notification-content">
+                    <h4>Başarı!</h4>
+                    <p>7 günlük serini tamamladın! Tebrikler!</p>
+                    <span class="notification-time">1 gün önce</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="error-modal" id="error-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Hata</h3>
+            </div>
+            <div class="modal-body">
+                <p id="error-message">Bir hata oluştu</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" onclick="closeErrorModal()">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
