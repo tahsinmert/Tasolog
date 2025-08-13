@@ -15,22 +15,11 @@ CORS(app)
 # Gelişmiş AI modellerini yükle
 print("🤖 AI modelleri yükleniyor...")
 
-try:
-    from transformers import pipeline
-    
-    # Duygu analizi modelleri
-    sentiment_analyzer = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest")
-    emotion_analyzer = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base")
-    
-    print("✅ AI modelleri başarıyla yüklendi!")
-    AI_MODELS_LOADED = True
-    
-except Exception as e:
-    print(f"⚠️ AI model yükleme hatası: {e}")
-    print("📝 Temel duygu analizi kullanılacak")
-    AI_MODELS_LOADED = False
-    sentiment_analyzer = None
-    emotion_analyzer = None
+# Netlify deployment için AI modelleri devre dışı
+print("ℹ️ Netlify deployment - AI models disabled")
+AI_MODELS_LOADED = False
+sentiment_analyzer = None
+emotion_analyzer = None
 
 # Temel analiz araçları
 vader_analyzer = SentimentIntensityAnalyzer()
